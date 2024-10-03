@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class UserService {
+
+    Logger logger = Logger.getLogger( UserService.class.getName());
     @Autowired
     private UserRepository userRepository;
 
@@ -24,6 +28,7 @@ public class UserService {
         }
 
         User user = new User(username, passwordEncoder.encode(password));
+        logger.info(user.toString());
         return userRepository.save(user);
     }
 

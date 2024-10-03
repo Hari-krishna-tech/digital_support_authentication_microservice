@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -28,6 +28,7 @@ public class AuthController {
         String password = registerRequest.get("password");
 
         User user = userService.registerUser(username, password);
+        System.out.println(user);
         String token = jwtService.generateToken(user.getUsername());
 
         Map<String, String> response = new HashMap<>();
