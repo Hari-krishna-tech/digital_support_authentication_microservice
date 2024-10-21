@@ -1,6 +1,7 @@
 package com.digitalSupport.SupportPortal.controller;
 
 
+import com.digitalSupport.SupportPortal.model.RegisterRequestBody;
 import com.digitalSupport.SupportPortal.model.User;
 import com.digitalSupport.SupportPortal.service.JwtService;
 import com.digitalSupport.SupportPortal.service.UserService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin()
@@ -21,15 +23,16 @@ public class AuthController {
 
     @Autowired
     private JwtService jwtService;
-
+    // add roles
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Map<String, String> registerRequest) {
-        String username = registerRequest.get("username");
-        String password = registerRequest.get("password");
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequestBody registerRequest) {
+        String username = registerRequest.getUsername();
+        String password = registerRequest.getPassword();
+        List<String> roles = registerRequest.getRoles();
 
-        User user = userService.registerUser(username, password);
+        User user = userService.registerUser(username, password, roles);
         System.out.println(user);
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user);
 
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
@@ -47,7 +50,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
 
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user);
 
         Map<String, String> response = new HashMap<>();
         response.put("token", token);

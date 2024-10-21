@@ -1,12 +1,16 @@
 package com.digitalSupport.SupportPortal.service;
 
+import com.digitalSupport.SupportPortal.model.Role;
 import com.digitalSupport.SupportPortal.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class UserDetailsImpl implements UserDetails {
@@ -19,7 +23,13 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return mapRolesToAuthorities(user.getRoles());
+    }
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override

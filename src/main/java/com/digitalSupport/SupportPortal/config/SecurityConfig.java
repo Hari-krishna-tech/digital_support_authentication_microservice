@@ -20,7 +20,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    // todo need to add roles
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

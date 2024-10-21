@@ -2,6 +2,9 @@ package com.digitalSupport.SupportPortal.service;
 
 
 
+import com.digitalSupport.SupportPortal.model.RegisterRequestBody;
+import com.digitalSupport.SupportPortal.model.Role;
+import com.digitalSupport.SupportPortal.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,8 +15,10 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -28,6 +33,11 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        return (List<String>) claims.get("roles");
     }
 
     public Date extractExpiration(String token) {
@@ -47,9 +57,10 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        return createToken(claims, user.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
